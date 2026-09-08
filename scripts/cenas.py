@@ -19,7 +19,6 @@ class Partida:
         self.inimigos_bolha = []
         self.itens = []
         
-        # Atributos do Boss
         self.boss = None
         self.projeteis_boss = []
         
@@ -51,11 +50,10 @@ class Partida:
                 elif caractere == '@':
                     self.paredes.append(pygame.Rect(x, y, LARGURA_BLOCO, ALTURA_BLOCO))
 
-        # Checa se é a Fase Final (Boss Fight)
         if indice_fase == len(MAPAS) - 1:
             self.inimigos.clear()
             self.boss = Boss(220, 100)
-            self.jogador.vidas = 5  # 5 vidas garantidas no Boss
+            self.jogador.vidas = 5
         else:
             self.boss = None
             qtd_inimigos = 2 + indice_fase
@@ -80,40 +78,40 @@ class Partida:
                     self.projeteis.append(BolhaAtaque(pos_x, pos_y, self.jogador.direcao_olhar))
 
     def atualizar(self):
+        obstaculos = self.plataformas + self.paredes
         self.jogador.atualizar(self.plataformas, self.paredes)
         
-        # 1. Projéteis do Jogador
+        # 1. Projéteis do Jogador vs Obstáculos e Inimigos
         for projeteil in self.projeteis[:]:
-            ativo = projeteil.atualizar(self.paredes)
+            ativo = projeteil.atualizar(obstaculos)
             if not ativo:
                 self.projeteis.remove(projeteil)
                 continue
 
-            # Colisão Projétil vs Boss
             if self.boss and projeteil.rect.colliderect(self.boss.rect):
                 self.boss.vida -= 1
-                self.projeteis.remove(projeteil)
+                if projeteil in self.projeteis:
+                    self.projeteis.remove(projeteil)
                 if self.boss.vida <= 0:
                     self.boss = None
                     return "vitoria"
                 continue
 
-            # Colisão Projétil vs Inimigos Comuns
             for inimigo in self.inimigos[:]:
                 if projeteil.rect.colliderect(inimigo.rect):
                     self.inimigos_bolha.append(InimigoBolha(inimigo.rect.x, inimigo.rect.y))
-                    self.inimigos.remove(inimigo)
+                    if inimigo in self.inimigos:
+                        self.inimigos.remove(inimigo)
                     if projeteil in self.projeteis:
                         self.projeteis.remove(projeteil)
                     break
 
-        # 2. Lógica do Boss
+        # 2. Boss
         if self.boss:
-            self.boss.atualizar(self.paredes)
+            self.boss.atualizar(obstaculos)
             novos_projeteis = self.boss.tentar_disparar()
             self.projeteis_boss.extend(novos_projeteis)
 
-            # Colisão Jogador vs Boss
             if self.jogador.rect.colliderect(self.boss.rect):
                 self.jogador.vidas -= 1
                 if self.jogador.vidas > 0:
@@ -121,33 +119,36 @@ class Partida:
                 else:
                     return "game_over"
 
-        # 3. Projéteis do Boss vs Jogador
+        # 3. Projéteis do Boss
         for p_boss in self.projeteis_boss[:]:
-            ativo = p_boss.atualizar(self.paredes)
+            ativo = p_boss.atualizar(obstaculos)
             if not ativo:
                 self.projeteis_boss.remove(p_boss)
                 continue
 
             if self.jogador.rect.colliderect(p_boss.rect):
                 self.jogador.vidas -= 1
-                self.projeteis_boss.remove(p_boss)
+                if p_boss in self.projeteis_boss:
+                    self.projeteis_boss.remove(p_boss)
                 if self.jogador.vidas > 0:
                     self.reiniciar_fase()
                 else:
                     return "game_over"
 
-        # 4. Inimigos e Itens Padrão
+        # 4. Inimigos na Bolha
         for bolha in self.inimigos_bolha[:]:
-            bolha.atualizar(self.paredes)
+            bolha.atualizar(obstaculos)
             if self.jogador.rect.colliderect(bolha.rect):
                 self.itens.append(ItemFruta(bolha.rect.x, bolha.rect.y))
                 self.inimigos_bolha.remove(bolha)
 
+        # 5. Coleta de Frutas
         for item in self.itens[:]:
             if self.jogador.rect.colliderect(item.rect):
                 self.jogador.pontos += 600
                 self.itens.remove(item)
 
+        # 6. Jogador vs Inimigos Padrão
         for inimigo in self.inimigos:
             inimigo.atualizar(self.plataformas, self.paredes)
             if self.jogador.rect.colliderect(inimigo.rect):
@@ -157,7 +158,6 @@ class Partida:
                 else:
                     return "game_over"
 
-        # Avanço de Fase (Nas fases 1 a 5)
         if not self.boss and not self.inimigos and not self.inimigos_bolha and not self.itens:
             if self.fase_atual + 1 < len(MAPAS):
                 self.fase_atual += 1
@@ -166,7 +166,7 @@ class Partida:
                 return "vitoria"
 
         return "partida"
-
+    
     def desenhar(self):
         for plat in self.plataformas:
             pygame.draw.rect(self.tela, (40, 160, 80), plat)

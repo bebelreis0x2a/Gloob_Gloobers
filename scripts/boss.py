@@ -6,43 +6,45 @@ class ProjetilBoss:
         self.rect = pygame.Rect(x, y, 16, 16)
         self.vel_x = vel_x
         self.vel_y = vel_y
+        self.imagem = pygame.transform.scale(pygame.image.load("assets/bolha.png").convert_alpha(), (16, 16))
 
     def atualizar(self, paredes):
         self.rect.x += self.vel_x
         self.rect.y += self.vel_y
 
-        # Destrói projétil se colidir com parede
         for parede in paredes:
             if self.rect.colliderect(parede):
                 return False
         return True
 
     def desenhar(self, tela):
-        pygame.draw.rect(tela, (255, 100, 0), self.rect)
+        tela.blit(self.imagem, self.rect)
 
 
 class Boss:
     def __init__(self, x, y):
-        # 5x o tamanho normal de 32px (160x160)
-        self.largura = 160
-        self.altura = 160
-        self.rect = pygame.Rect(x, y, self.largura, self.altura)
-        
-        # Movimentação diagonal rápida
+        self.rect = pygame.Rect(x, y, 160, 160)
         self.vel_x = 5
         self.vel_y = 5
         self.vida = 20
         
-        # Controle de disparos
         self.tempo_ultimo_disparo = pygame.time.get_ticks()
-        self.cooldown_disparo = 2000  # Dispara a cada 2 segundos
+        self.cooldown_disparo = 2000
+
+        # Scale para 160x160px
+        self.sprites = [
+            pygame.transform.scale(pygame.image.load("assets/chefe-0.png").convert_alpha(), (160, 160)),
+            pygame.transform.scale(pygame.image.load("assets/chefe-1.png").convert_alpha(), (160, 160)),
+            pygame.transform.scale(pygame.image.load("assets/chefe-2.png").convert_alpha(), (160, 160)),
+            pygame.transform.scale(pygame.image.load("assets/chefe-3.png").convert_alpha(), (160, 160))
+        ]
+        self.frame_atual = 0
+        self.tempo_animacao = 0
 
     def atualizar(self, paredes):
-        # Movimentação diagonal
         self.rect.x += self.vel_x
         self.rect.y += self.vel_y
 
-        # Quica ao rebater em paredes
         for parede in paredes:
             if self.rect.colliderect(parede):
                 if self.rect.right >= parede.left or self.rect.left <= parede.right:
@@ -50,19 +52,21 @@ class Boss:
                 if self.rect.bottom >= parede.top or self.rect.top <= parede.bottom:
                     self.vel_y *= -1
 
-        # Limites da arena
         if self.rect.left <= 40 or self.rect.right >= 560:
             self.vel_x *= -1
         if self.rect.top <= 40 or self.rect.bottom >= 560:
             self.vel_y *= -1
+
+        self.tempo_animacao += 1
+        if self.tempo_animacao >= 8:
+            self.tempo_animacao = 0
+            self.frame_atual = (self.frame_atual + 1) % len(self.sprites)
 
     def tentar_disparar(self):
         agora = pygame.time.get_ticks()
         projeteis = []
         if agora - self.tempo_ultimo_disparo >= self.cooldown_disparo:
             self.tempo_ultimo_disparo = agora
-            
-            # Gera 6 projéteis espaçados a cada 60 graus
             centro_x = self.rect.centerx
             centro_y = self.rect.centery
             velocidade_projetil = 6
@@ -76,5 +80,4 @@ class Boss:
         return projeteis
 
     def desenhar(self, tela):
-        # Retângulo Laranja Gigante
-        pygame.draw.rect(tela, (220, 20, 60), self.rect)
+        tela.blit(self.sprites[self.frame_atual], self.rect)
