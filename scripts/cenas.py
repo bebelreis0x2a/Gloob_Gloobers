@@ -222,7 +222,7 @@ class CenasGerenciador:
                     elif self.estado == "pause":
                         self.estado = "partida"
                 
-                if evento.key == pygame.K_SPACE and self.estado in ["game_over", "vitoria"]:
+                if evento.key == pygame.K_p and self.estado in ["game_over", "vitoria"]:
                     self.partida = Partida(self.tela)
                     self.estado = "partida"
 
@@ -250,7 +250,7 @@ class CenasGerenciador:
             overlay.fill((150, 0, 0, 180))
             self.tela.blit(overlay, (0, 0))
             txt_game_over = self.fonte_menu.render("GAME OVER", True, (255, 255, 255))
-            txt_reiniciar = self.fonte_menu.render("Pressione ESPAÇO", True, (255, 255, 255))
+            txt_reiniciar = self.fonte_menu.render("Pressione a tecla P", True, (255, 255, 255))
             self.tela.blit(txt_game_over, txt_game_over.get_rect(center=(300, 260)))
             self.tela.blit(txt_reiniciar, txt_reiniciar.get_rect(center=(300, 320)))
 
@@ -259,6 +259,6 @@ class CenasGerenciador:
             overlay.fill((0, 150, 0, 180))
             self.tela.blit(overlay, (0, 0))
             txt_vitoria = self.fonte_menu.render("VOCÊ VENCEU!", True, (255, 255, 255))
-            txt_reiniciar = self.fonte_menu.render("Pressione ESPAÇO", True, (255, 255, 255))
+            txt_reiniciar = self.fonte_menu.render("Pressione a tecla P", True, (255, 255, 255))
             self.tela.blit(txt_vitoria, txt_vitoria.get_rect(center=(300, 260)))
             self.tela.blit(txt_reiniciar, txt_reiniciar.get_rect(center=(300, 320)))

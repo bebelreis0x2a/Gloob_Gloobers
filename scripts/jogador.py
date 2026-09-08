@@ -6,8 +6,8 @@ class Jogador:
         self.vel_x = 0
         self.vel_y = 0
         self.no_chao = False
-        self.direcao_olhar = 1
-        self.vidas = 24
+        self.direcao_olhar = -1
+        self.vidas = 20
         self.pontos = 0
 
         self.sprites = [
@@ -102,6 +102,6 @@ class Jogador:
 
     def desenhar(self, tela):
         imagem = self.sprites[self.frame_atual]
-        if self.direcao_olhar == -1:
+        if self.direcao_olhar == 1:
             imagem = pygame.transform.flip(imagem, True, False)
         tela.blit(imagem, self.rect)

@@ -26,7 +26,10 @@ class Boss:
         self.rect = pygame.Rect(x, y, 160, 160)
         self.vel_x = 5
         self.vel_y = 5
-        self.vida = 20
+        
+        # Vida do Boss
+        self.vida_maxima = 20
+        self.vida = self.vida_maxima
         
         self.tempo_ultimo_disparo = pygame.time.get_ticks()
         self.cooldown_disparo = 2000
@@ -80,4 +83,29 @@ class Boss:
         return projeteis
 
     def desenhar(self, tela):
+        # 1. Desenha o sprite do Boss
         tela.blit(self.sprites[self.frame_atual], self.rect)
+
+        # 2. Configurações da Barra de Vida
+        largura_barra = 120  # Largura total da barra em pixels
+        altura_barra = 12    # Altura da barra em pixels
+        
+        # Centraliza a barra horizontalmente em relação ao Boss e coloca 15px acima dele
+        pos_x = self.rect.centerx - (largura_barra // 2)
+        pos_y = self.rect.top - 15
+
+        # Evita divisão por zero ou proporção negativa
+        porcentagem_vida = max(0, self.vida / self.vida_maxima)
+        largura_atual = int(largura_barra * porcentagem_vida)
+
+        # Retângulos da barra
+        rect_fundo = pygame.Rect(pos_x, pos_y, largura_barra, altura_barra)
+        rect_vida = pygame.Rect(pos_x, pos_y, largura_atual, altura_barra)
+
+        # 3. Desenho dos elementos
+        # Fundo vermelho/escuro
+        pygame.draw.rect(tela, (200, 30, 30), rect_fundo)
+        # Vida atual em verde
+        pygame.draw.rect(tela, (50, 220, 50), rect_vida)
+        # Borda preta em volta da barra para acabamento
+        pygame.draw.rect(tela, (0, 0, 0), rect_fundo, 2)

@@ -74,21 +74,21 @@ MAPA_FASE_4 = [
 ]
 
 MAPA_FASE_5 = [
+    "@@@@@@@@@@@@@@@",
     "@             @",
-    "@             @",
-    "@             @",
-    "@  @          @",
+    "@      @      @",
+    "@  @       @  @",
     "@    @   @    @",
     "@           @@@",
     "@           @ @",
     "@@@      @    @",
-    "@     @       @",
+    "@     @      @@",
     "@   @         @",
-    "@        @    @",
+    "@@       @    @",
     "@             @",
     "@     @       @",
     "@             @",
-    "@@@@ @ @ @ @@@@",
+    "@@@@@@@@@@@@@@@",
 ]
 
 MAPA_FINAL = [
@@ -109,4 +109,4 @@ MAPA_FINAL = [
     "@@@@@@@@@@@@@@@",
 ]
 
-MAPAS = [MAPA_FASE_1, MAPA_FASE_2, MAPA_FASE_3, MAPA_FASE_4, MAPA_FASE_5, MAPA_FINAL]
+MAPAS = [MAPA_FASE_1, MAPA_FASE_2, MAPA_FASE_3, MAPA_FASE_5, MAPA_FASE_4, MAPA_FINAL]
