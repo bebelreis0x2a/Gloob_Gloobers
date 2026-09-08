@@ -28,7 +28,7 @@ class Boss:
         self.vel_y = 5
         
         # Vida do Boss
-        self.vida_maxima = 20
+        self.vida_maxima = 50
         self.vida = self.vida_maxima
         
         self.tempo_ultimo_disparo = pygame.time.get_ticks()
@@ -109,3 +109,5 @@ class Boss:
         pygame.draw.rect(tela, (50, 220, 50), rect_vida)
         # Borda preta em volta da barra para acabamento
         pygame.draw.rect(tela, (0, 0, 0), rect_fundo, 2)
+
+        pygame.draw.rect(tela, (255, 0, 0), self.rect, 2)

@@ -7,7 +7,7 @@ class Jogador:
         self.vel_y = 0
         self.no_chao = False
         self.direcao_olhar = -1
-        self.vidas = 20
+        self.vidas = 5
         self.pontos = 0
 
         self.sprites = [

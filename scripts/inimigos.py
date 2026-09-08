@@ -15,7 +15,7 @@ class Inimigo:
 
     def atualizar(self, plataformas, paredes):
         # Gravidade
-        self.vel_y += 0.5
+        self.vel_y += 0.1
         if self.vel_y > 8:
             self.vel_y = 8
 
